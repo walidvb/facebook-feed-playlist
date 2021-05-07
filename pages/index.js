@@ -41,8 +41,11 @@ const filterPosts = (posts) => posts.map((post) => {
   }
   const { image: { src } } = media
   return {
-    url: unshimmed_url,
-    image_url: src
+    metadata: post,
+    media: {
+      url: unshimmed_url,
+      image_url: src
+    }
   }
 }).filter(Boolean)
 
@@ -53,7 +56,7 @@ export default function Page () {
     <Layout>
       <h1>FeedIt</h1>
       <MediaProvider list={list}>
-        <MediaFeed />
+        <MediaFeed renderMedia={({ media }) => <Post media={media}/>}/>
       </MediaProvider>
     </Layout>
   )

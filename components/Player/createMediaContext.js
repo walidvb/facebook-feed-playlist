@@ -13,7 +13,7 @@ const reducer = (state, { payload, type } = {}) => {
       return {
         ...state,
         playing: {
-          ...payload.media,
+          ...payload.item,
           isPlaying: true,
         },
       }
@@ -21,7 +21,7 @@ const reducer = (state, { payload, type } = {}) => {
       return {
         ...state,
         playing: {
-          ...payload.media,
+          ...payload.item,
           isPlaying: false,
         },
       }
@@ -29,7 +29,10 @@ const reducer = (state, { payload, type } = {}) => {
       const next = state.playing.position + 1
       return {
         ...state,
-        playing: state.queue[next]
+        playing: {
+          ...state.queue[next],
+          isPlaying: true,
+        }
       }
     default:
       return state
@@ -46,14 +49,17 @@ export const {
   Provider: MediaProvider,
   useContext: useMediaContext
 } = fabricateContext(({ list }) => {
+  
   const [state, dispatch] = useReducer(reducer, initialState({ list }))
+  
   useEffect(() => {
     dispatch({ type: 'NEW_LIST', payload: list})
   }, [list])
+
   const actions = {
-    play: (media) => dispatch({ type: 'PLAY', payload: { media } }),
+    play: (item) => dispatch({ type: 'PLAY', payload: { item } }),
+    pause: () => dispatch({ type: 'PAUSE' }),
     next: () => dispatch({ type: 'NEXT' }),
-    
   }
 
   return {

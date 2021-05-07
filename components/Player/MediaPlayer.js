@@ -14,12 +14,13 @@ const LazyMedia = ({ image, onClick }) => (
   </div>
 )
 
-const Media = ({ media }) => {
+const Media = ({ item }) => {
   const { play, next, playing } = useMediaContext()
   const [displayIframe, setDisplayIframe] = useState(false)
 
+  const { media } = item
   const { url, image_url } = media
-  const { url: playingUrl } = playing
+  const { url: playingUrl } = (playing.media ?? {})
   
   const isPlaying = useMemo(() => playingUrl === url, [url, playingUrl])
   
@@ -29,13 +30,13 @@ const Media = ({ media }) => {
     return null;
   }
   if (!displayIframe && image_url) {
-    return <LazyMedia image={image_url} onClick={() => play(media)} />
+    return <LazyMedia image={image_url} onClick={() => play(item)} />
   }
   return <div>
     <ReactPlayer
       style={{ maxWidth: '100vw' }}
       url={url}
-      onPlay={() => play(media)}
+      onPlay={() => play(item)}
       onPause={() => { }}
       onEnded={next}
       controls
