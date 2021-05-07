@@ -1,54 +1,51 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ReactPlayer from 'react-player';
 import { useMediaContext } from './createMediaContext';
 
-const Media = ({ url, image, index }) => {
-  const [displayIframe, setDisplayIframe] = useState(false)
-  const [playing, setPlaying] = useState(false)
-  const { nowPlaying, setNowPlaying } = useMediaContext()
-  useEffect(() => {
-    const isPlaying = nowPlaying === index
-    setPlaying(isPlaying)
-    setDisplayIframe(isPlaying)
-    if (displayIframe) {
-    }
-  }, [nowPlaying, index, setPlaying])
+const usePlayerControls = () => {
+  const { play } = useMediaContext()
+  return {
+    play
+  }
+}
 
-  useEffect(() => {
-    if (nowPlaying === index && (displayIframe || playing)) {
-      setNowPlaying(index)
-    }
-  }, [displayIframe, playing, nowPlaying])
+const LazyMedia = ({ image, onClick }) => (
+  <div>
+    <div style={{ width: "640px", maxWidth: '100vw' }} onClick={onClick}
+      className="relative cursor-pointer"
+    >
+      {/* <YoutubePlayIcon /> */}
+      <img className="w-full" src={image} />
+    </div>
+  </div>
+)
+
+const Media = ({ media }) => {
+  const { play, playing } = useMediaContext()
+  const [displayIframe, setDisplayIframe] = useState(false)
+
+  const { url, image_url } = media
+  const { url: playingUrl } = playing
+  
+  const isPlaying = useMemo(() => playingUrl === url, [url, playingUrl])
+  
+  useEffect(() => { if(isPlaying){ setDisplayIframe(true) } }, [isPlaying])
 
   if (!ReactPlayer.canPlay(url)) {
     return null;
   }
-
-  if (!displayIframe && image) {
-    return <div>
-      <div style={{ width: "640px", maxWidth: '100vw' }} onClick={() => {
-        setDisplayIframe(true)
-        setNowPlaying(index)
-      }}
-        className="relative cursor-pointer"
-      >
-        <YoutubePlayIcon />
-        <img className="w-full" src={image} />
-      </div>
-    </div>
+  if (!displayIframe && image_url) {
+    return <LazyMedia image={image_url} onClick={() => play(media)} />
   }
   return <div>
     <ReactPlayer
       style={{ maxWidth: '100vw' }}
       url={url}
-      onPlay={() => setNowPlaying(index)}
+      onPlay={() => play(media)}
       onPause={() => { }}
-      onEnded={() => {
-        setNowPlaying(index + 1)
-        setPlaying(false)
-      }}
+      onEnded={{}}
       controls
-      playing={playing}
+      playing={isPlaying}
     />
   </div>
 };

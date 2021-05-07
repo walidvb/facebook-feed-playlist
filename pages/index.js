@@ -35,11 +35,15 @@ const Post = ({ post }) => {
   const firstAttachment = data[0]
   const { unshimmed_url, media }  = firstAttachment
   if(!media){
-    console.log(firstAttachment)
+    console.log('skipping', post)
     return null
   }
   const { image: { src } } = media
-  return <Media url={unshimmed_url} image={src}/>
+  const media_ = {
+    url: unshimmed_url,
+    image_url: src
+  }
+  return <Media media={media_} />
   return <div>
     {Object.entries(data[0]).map((e) => (
       <>
