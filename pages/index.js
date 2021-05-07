@@ -74,7 +74,10 @@ export default function Page () {
     <Layout>
       <h1>FeedIt</h1>
       <MediaProvider list={list}>
-        <MediaFeed renderMedia={({ renderPlayer, metadata }) => <Post renderPlayer={renderPlayer} metadata={metadata}/>}/>
+        <MediaFeed 
+          renderMedia={({ renderPlayer, metadata }) => <Post renderPlayer={renderPlayer} metadata={metadata}/>}
+          className="ts"
+        />
       </MediaProvider>
     </Layout>
   )

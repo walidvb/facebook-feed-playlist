@@ -20,12 +20,15 @@
   ],
   "license": "ISC",
   "dependencies": {
+    "autoprefixer": "^10.2.5",
     "fb-sdk-wrapper": "^1.1.0",
     "next": "^10.0.7",
     "next-auth": "latest",
+    "postcss": "^8.2.14",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-player": "^2.9.0",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "tailwindcss": "^2.1.2"
   }
 }

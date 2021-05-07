@@ -5,7 +5,7 @@ export default function Layout ({children}) {
   return (
     <>
       <Header/>
-      <main>
+      <main className="container mx-auto">
         {children}
       </main>
       <Footer/>

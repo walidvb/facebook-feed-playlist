@@ -1,20 +1,14 @@
 import Link from "next/link"
-import styles from "./footer.module.css"
-import { dependencies } from "../package.json"
 
+import { dependencies } from "../package.json"
+const styles = {}
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
+    <footer className={""}>
       <hr />
-      <ul className={styles.navItems}>
+      <ul className={"container mx-auto flex justify-around py-4"}>
         <li className={styles.navItem}>
-          <a href="https://next-auth.js.org">Documentation</a>
-        </li>
-        <li className={styles.navItem}>
-          <a href="https://www.npmjs.com/package/next-auth">NPM</a>
-        </li>
-        <li className={styles.navItem}>
-          <a href="https://github.com/nextauthjs/next-auth-example">GitHub</a>
+          <a href="https://github.com/nextauthjs/next-auth-example">Built with nextauthjs</a>
         </li>
         <li className={styles.navItem}>
           <Link href="/policy">
