@@ -1,31 +1,46 @@
 
-import { useReducer, useState } from 'react';
+import { useReducer, useState, useEffect } from 'react';
 import fabricateContext from '../hooks/createContext';
 
 const reducer = (state, { payload, type }) => {
   switch(type){
+    case 'NEW_LIST':
+      return {
+        ...state,
+        queue: payload
+      }
     case 'PLAY':
       return {
         ...state,
-        playing: payload.media,
+        playing: {
+          ...payload.media,
+        },
       }
     default:
       return state
   }
+
+  function getIndex(media){
+    state.queue.findIndex((m) => media.url === m.url)
+  }
 }
 
-const initialState = {
+const initialState = ({ list = [] }) => ({
   playing: {},
-}
+  queue: list.map((m, i) => ({...m, position: i})),
+})
 
 export const {
   Provider: MediaProvider,
   useContext: useMediaContext
-} = fabricateContext(() => {
-  const [state, dispatch] = useReducer(reducer, initialState)
-  console.log("state", state)
+} = fabricateContext(({ list }) => {
+  const [state, dispatch] = useReducer(reducer, initialState({ list }))
+  useEffect(() => {
+    dispatch({ type: 'NEW_LIST', payload: list})
+  }, [list])
   const actions = {
     play: (media) => dispatch({ type: 'PLAY', payload: { media } })
+    
   }
 
   return {

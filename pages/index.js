@@ -4,6 +4,7 @@ import * as Facebook from 'fb-sdk-wrapper';
 import { useSession } from 'next-auth/client';
 import { MediaProvider } from '../components/Player/createMediaContext';
 import Media from '../components/Player/MediaPlayer';
+import { MediaFeed } from '../components/Player/MediaFeed';
 
 const useFeed = () => {
   const [posts, setPosts] = useState([])
@@ -30,7 +31,7 @@ const useFeed = () => {
   
 }
 
-const Post = ({ post }) => {
+const filterPosts = (posts) => posts.map((post) => {
   const { attachments: { data } } = post
   const firstAttachment = data[0]
   const { unshimmed_url, media }  = firstAttachment
@@ -39,31 +40,20 @@ const Post = ({ post }) => {
     return null
   }
   const { image: { src } } = media
-  const media_ = {
+  return {
     url: unshimmed_url,
     image_url: src
   }
-  return <Media media={media_} />
-  return <div>
-    {Object.entries(data[0]).map((e) => (
-      <>
-        <span>{e[0]}</span>
-        <span>{e[1]}</span>
-        </>
-    ))}
-    <br />
-  </div>
-}
+}).filter(Boolean)
 
 export default function Page () {
   const { posts } = useFeed()
+  const list = filterPosts(posts)
   return (
     <Layout>
       <h1>FeedIt</h1>
-      <MediaProvider>
-        {
-          posts.map((post) => <Post post={post}/>)
-        }
+      <MediaProvider list={list}>
+        <MediaFeed />
       </MediaProvider>
     </Layout>
   )

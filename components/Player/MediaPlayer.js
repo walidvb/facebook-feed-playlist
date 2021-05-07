@@ -2,12 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import ReactPlayer from 'react-player';
 import { useMediaContext } from './createMediaContext';
 
-const usePlayerControls = () => {
-  const { play } = useMediaContext()
-  return {
-    play
-  }
-}
 
 const LazyMedia = ({ image, onClick }) => (
   <div>
