@@ -21,7 +21,7 @@ const useFeed = () => {
         return_scopes: true
       })
 
-      const { data } = await Facebook.api('/me/posts?fields=attachments{description,title,unshimmed_url,media,subattachments},created_time')
+      const { data } = await Facebook.api('/me/posts?fields=attachments{description,title,unshimmed_url,media,subattachments},created_time,message')
       setPosts(data)
     })()
   }, [])
@@ -41,13 +41,31 @@ const filterPosts = (posts) => posts.map((post) => {
   }
   const { image: { src } } = media
   return {
-    metadata: post,
+    metadata: {
+      ...firstAttachment,
+      createdAt: post.created_time,
+    },
     media: {
       url: unshimmed_url,
       image_url: src
     }
   }
 }).filter(Boolean)
+
+const Post = ({ renderPlayer, metadata }) => {
+  const { createdAt, message } = metadata
+  return <div>
+    {createdAt}
+    {message}
+    {renderPlayer()}
+      <details>
+      <summary>
+        item
+      </summary>
+      {JSON.stringify(metadata)}
+    </details>
+  </div>
+}
 
 export default function Page () {
   const { posts } = useFeed()
@@ -56,7 +74,7 @@ export default function Page () {
     <Layout>
       <h1>FeedIt</h1>
       <MediaProvider list={list}>
-        <MediaFeed renderMedia={({ media }) => <Post media={media}/>}/>
+        <MediaFeed renderMedia={({ renderPlayer, metadata }) => <Post renderPlayer={renderPlayer} metadata={metadata}/>}/>
       </MediaProvider>
     </Layout>
   )
