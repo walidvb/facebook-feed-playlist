@@ -15,7 +15,7 @@ const LazyMedia = ({ image, onClick }) => (
 )
 
 const Media = ({ media }) => {
-  const { play, playing } = useMediaContext()
+  const { play, next, playing } = useMediaContext()
   const [displayIframe, setDisplayIframe] = useState(false)
 
   const { url, image_url } = media
@@ -37,9 +37,9 @@ const Media = ({ media }) => {
       url={url}
       onPlay={() => play(media)}
       onPause={() => { }}
-      onEnded={{}}
+      onEnded={next}
       controls
-      playing={isPlaying}
+      playing={isPlaying && playing.isPlaying}
     />
   </div>
 };

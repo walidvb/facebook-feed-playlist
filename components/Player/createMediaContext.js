@@ -2,27 +2,39 @@
 import { useReducer, useState, useEffect } from 'react';
 import fabricateContext from '../hooks/createContext';
 
-const reducer = (state, { payload, type }) => {
+const reducer = (state, { payload, type } = {}) => {
   switch(type){
     case 'NEW_LIST':
       return {
         ...state,
-        queue: payload
+        queue: payload.map((m, i) => ({ ...m, position: i }))
       }
     case 'PLAY':
       return {
         ...state,
         playing: {
           ...payload.media,
+          isPlaying: true,
         },
+      }
+    case 'PAUSE':
+      return {
+        ...state,
+        playing: {
+          ...payload.media,
+          isPlaying: false,
+        },
+      }
+    case 'NEXT':
+      const next = state.playing.position + 1
+      return {
+        ...state,
+        playing: state.queue[next]
       }
     default:
       return state
   }
 
-  function getIndex(media){
-    state.queue.findIndex((m) => media.url === m.url)
-  }
 }
 
 const initialState = ({ list = [] }) => ({
@@ -39,7 +51,8 @@ export const {
     dispatch({ type: 'NEW_LIST', payload: list})
   }, [list])
   const actions = {
-    play: (media) => dispatch({ type: 'PLAY', payload: { media } })
+    play: (media) => dispatch({ type: 'PLAY', payload: { media } }),
+    next: () => dispatch({ type: 'NEXT' }),
     
   }
 
