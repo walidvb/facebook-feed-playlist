@@ -1,5 +1,5 @@
 
-import { useReducer, useEffect } from 'react';
+import { useReducer, useEffect, useMemo } from 'react';
 import fabricateContext from '../hooks/createContext';
 
 const reducer = (state, { payload, type } = {}) => {
@@ -44,6 +44,22 @@ const reducer = (state, { payload, type } = {}) => {
           progress: payload.progress,
         },
       }
+    case 'SEEKED_TO':
+      return {
+        queue: state.queue.map((item) => {
+          if(item === payload.item){
+            return {
+              ...item, 
+              seekedTo: payload.seekTo
+            }
+          }
+          return item
+        }),
+        playing: {
+          ...state.playing,
+          seekedTo: payload.seekTo,
+        },
+      }
     case 'NEXT':
       const next = state.playing.position + 1
       return {
@@ -80,6 +96,7 @@ export const {
     pause: () => dispatch({ type: 'PAUSE' }),
     next: () => dispatch({ type: 'NEXT' }),
     progressed: ({ progress, item }) => dispatch({ type: 'PROGRESSED', payload: { progress, item } }),
+    seekTo: ({ seekTo, item }) => dispatch({ type: 'SEEKED_TO', payload: { seekTo, item } }),
   }
 
   return {
@@ -87,3 +104,16 @@ export const {
     ...actions,
   }
 })
+
+export const useItemState = (item) => {
+  const { playing } = useMediaContext()
+  const { media: { url } } = item
+
+  const { media: playingMedia } = playing
+  const { url: playingUrl } = (playingMedia || {})
+  const isPlaying = useMemo(() => playingUrl === url, [url, playingUrl])
+
+  return {
+    isPlaying
+  }
+}

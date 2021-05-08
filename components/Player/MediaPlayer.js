@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import ReactPlayer from 'react-player';
-import { useMediaContext } from './createMediaContext';
+import { useMediaContext, useItemState } from './createMediaContext';
 
 
 const LazyMedia = ({ image, onClick }) => (
@@ -14,17 +14,24 @@ const LazyMedia = ({ image, onClick }) => (
   </div>
 )
 
-const Media = ({ item }) => {
-  const { play, next, playing } = useMediaContext()
-  const [displayIframe, setDisplayIframe] = useState(false)
 
-  const { media } = item
+
+const Media = ({ item }) => {
+  const { play, next, pause, playing, progressed } = useMediaContext()
+  const player = useRef()
+  const [displayIframe, setDisplayIframe] = useState(false)
+  const { isPlaying } = useItemState(item)
+
+  const { media, seekedTo } = item
   const { url, image_url } = media
-  const { url: playingUrl } = (playing.media ?? {})
-  
-  const isPlaying = useMemo(() => playingUrl === url, [url, playingUrl])
   
   useEffect(() => { if(isPlaying){ setDisplayIframe(true) } }, [isPlaying])
+  useEffect(() => {
+    if (!player.current || !seekedTo){
+      return
+    }
+    player.current.seekTo(seekedTo)
+  }, [isPlaying, seekedTo, player])
 
   if (!ReactPlayer.canPlay(url)) {
     return null;
@@ -34,16 +41,16 @@ const Media = ({ item }) => {
     return <LazyMedia image={image_url} onClick={() => play(item)} />
   }
 
-  return <div className="">
-    <ReactPlayer
+  return <ReactPlayer
       url={url}
+      ref={player}
       onPlay={() => play(item)}
-      onPause={() => { }}
+      onPause={() => pause()}
       onEnded={next}
+      onProgress={({ played }) => progressed({ progress: played * 100, item })}
       controls
       playing={isPlaying && playing.isPlaying}
     />
-  </div>
 };
 
 export default Media

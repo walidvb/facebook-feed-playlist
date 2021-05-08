@@ -31,7 +31,6 @@ input[type=range] {
   --height: 8px;
   --thumb-height: 8px;
   --thumb-width: 5px;
-  --thumb-color: 5px;
   --progress-color: var(--brand);
 }
 

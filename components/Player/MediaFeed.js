@@ -15,10 +15,9 @@ export function MediaFeed({
 
   return <div className={className}>
     {queue.map((item) => {
-      const isPlaying = playing.media?.url === item.media.url
-      return <RenderMedia 
+      return <RenderMedia
+        key={item.media.url}
         item={item}
-        isPlaying={isPlaying}
         renderPlayer={() => <Media key={item.media.url} item={item} />}
       />
     })}
