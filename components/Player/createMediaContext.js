@@ -4,9 +4,15 @@ import fabricateContext from '../hooks/createContext';
 
 
 const reducer = (state, { payload, type } = {}) => {
-  const updateQueue = ([item, newItem]) => state.queue.map((it) => {
-    if (it.media.url === item.media.url) {
-      return newItem
+  const updateQueue = (...changes) => state.queue.map((it) => {
+    const appliedChange = changes.find((change) => {
+      const [from, to] = change
+      if (it.media.url === from.media.url) {
+        return true
+      }
+    })
+    if (appliedChange ){
+      return appliedChange[1]
     }
     return it
   })
@@ -54,7 +60,9 @@ const reducer = (state, { payload, type } = {}) => {
         seekedTo: payload.seekTo
       }
       return {
+        ...state,
         queue: updateQueue([payload.item, newSeeked]),
+        playing: newSeeked,
       }
     case 'NEXT':
       const next = state.playing.position + 1
