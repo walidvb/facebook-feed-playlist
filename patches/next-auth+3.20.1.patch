@@ -1,0 +1,13 @@
+diff --git a/node_modules/next-auth/dist/providers/facebook.js b/node_modules/next-auth/dist/providers/facebook.js
+index 59540d2..bdb499d 100644
+--- a/node_modules/next-auth/dist/providers/facebook.js
++++ b/node_modules/next-auth/dist/providers/facebook.js
+@@ -11,7 +11,7 @@ function Facebook(options) {
+     name: "Facebook",
+     type: "oauth",
+     version: "2.0",
+-    scope: "email",
++    scope: "email,user_posts",
+     accessTokenUrl: "https://graph.facebook.com/oauth/access_token",
+     authorizationUrl: "https://www.facebook.com/v7.0/dialog/oauth?response_type=code",
+     profileUrl: "https://graph.facebook.com/me?fields=email,name,picture",
