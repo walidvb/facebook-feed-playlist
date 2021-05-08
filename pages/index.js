@@ -7,7 +7,7 @@ import Media from '../components/Player/MediaPlayer';
 import { MediaFeed } from '../components/Player/MediaFeed';
 import { useWindowScroll } from 'react-use';
 import ReactPlayer from 'react-player';
-
+import { DateTime } from 'luxon'
 const useFeed = () => {
   const [posts, setPosts] = useState([])
   const [fbLoaded, setfbLoaded] = useState(false)
@@ -85,9 +85,14 @@ const filterPosts = (posts) => posts.map((post) => {
 
 const Post = ({ renderPlayer, metadata }) => {
   const { createdAt, message } = metadata
-  return <div>
-    {createdAt}
-    {message}
+  const renderedDate = DateTime.fromISO(createdAt).toLocaleString({ month: 'long', day: 'numeric' })
+  return <div className="mb-8 pt-8">
+    <div className="color-gray-700">
+      {renderedDate}
+    </div>
+    <div className="mt-1 mb-4 text-lg">
+      {message}
+    </div>
     {renderPlayer()}
       <details>
       <summary>
@@ -106,7 +111,7 @@ export default function Page () {
       <MediaProvider list={posts}>
         <MediaFeed
           RenderMedia={Post}
-          className="ts"
+          className="divide-gray-400 divide-y"
         />
       </MediaProvider>
     </Layout>
