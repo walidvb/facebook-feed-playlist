@@ -3,7 +3,8 @@ import Media from './MediaPlayer';
 
 
 export const MediaFloatingPlayer = ({
-  hidden
+  hidden,
+  className
 }) => {
   const { playing } = useMediaContext();
   if (!playing.media) {
@@ -11,7 +12,7 @@ export const MediaFloatingPlayer = ({
   }
   return <>
     <Media
-      // className={hidden && "absolute top-0 pointer-events-none opacity-0"}
+      className={[className, hidden && "absolute top-0 pointer-events-none opacity-0"].join(' ')}
       item={playing}
       lazy={false} 
     />

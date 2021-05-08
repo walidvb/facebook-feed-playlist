@@ -1,9 +1,11 @@
 import { useItemState, useMediaContext } from "./createMediaContext"
 import MediaControls from './MediaControls';
+import { DateTime } from 'luxon';
 
 const Item = ({ item, className }) => {
-  const { title, image_url } = item.media
+  const { media: { title, image_url }, metadata: { createdAt} } = item
   const { isPlaying } = useItemState(item)
+  const renderedDate = DateTime.fromISO(createdAt).toLocaleString({ month: 'long', day: 'numeric' });
   return <div className={`flex items-center group ${className}`}>
     <div class="relative w-12 h-12 bg-center bg-cover flex-shrink-0 mr-2" style={{backgroundImage: `url(${image_url})`}}>
       <MediaControls
@@ -12,8 +14,13 @@ const Item = ({ item, className }) => {
         item={item}
       />
     </div>
-    <div className={`mr-2 text-sm ${isPlaying && 'font-bold'}`}>
-      { title }
+    <div>
+      <div className="text-gray-600 text-xs italic">
+        {renderedDate}
+      </div>
+      <div className={`mr-2 text-sm ${isPlaying && 'font-bold'}`}>
+        { title }
+      </div>
     </div>
   </div>
 }

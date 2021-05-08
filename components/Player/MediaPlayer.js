@@ -43,8 +43,8 @@ const Media = ({
     return <LazyMedia className={className} image={image_url} onClick={() => play(item)} />
   }
 
-  return <ReactPlayer
-      className={className}
+  return <div className={className}>
+    <ReactPlayer
       url={url}
       ref={player}
       onPlay={() => play(item)}
@@ -53,7 +53,8 @@ const Media = ({
       onProgress={({ played }) => progressed({ progress: played * 100, item })}
       controls
       playing={isPlaying && playing.isPlaying}
-    />
+      />
+    </div>
 };
 
 export default Media
