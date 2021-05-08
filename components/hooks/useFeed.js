@@ -9,7 +9,7 @@ const filterPosts = (posts) => posts.map((post) => {
   }
   const { attachments: { data }, created_time, message } = post
   const firstAttachment = data[0]
-  const { unshimmed_url, media } = firstAttachment
+  const { unshimmed_url, media, title, description } = firstAttachment
   if (!ReactPlayer.canPlay(unshimmed_url)) {
     console.log('skipping', post)
     return null
@@ -23,7 +23,9 @@ const filterPosts = (posts) => posts.map((post) => {
     },
     media: {
       url: unshimmed_url,
-      image_url: src
+      image_url: src,
+      title,
+      description
     }
   }
 }).filter(Boolean)

@@ -3,7 +3,11 @@ import { useMemo } from 'react';
 import { useMediaContext, useItemState } from "./createMediaContext";
 
 const VALUE_FACTOR = 100
-const MediaControls = ({ item }) => {
+const MediaControls = ({ 
+  item,
+  className,
+  noProgress,
+}) => {
   const { play, pause, seekTo } = useMediaContext()
   const { 
     progress = 0 
@@ -23,9 +27,11 @@ const MediaControls = ({ item }) => {
       <Play className={`h-12 w-12`} />
     </div>
   }
-  return <div className="flex items-center">
-    {renderButton()}
-    <div className="w-full break-all ml-4">
+  const renderProgress = () => {
+    if(noProgress){
+      return
+    }
+    return <div className="w-full break-all ml-4">
       <style dangerouslySetInnerHTML={{
         __html: `
         #${id}::-webkit-slider-runnable-track{
@@ -40,10 +46,14 @@ const MediaControls = ({ item }) => {
         min={0}
         className="w-full"
         max={100}
-        onChange={({ target: { value } }) => seekTo({ seekTo: parseInt(value)/100, item })}
-        tabIndex={1} 
+        onChange={({ target: { value } }) => seekTo({ seekTo: parseInt(value) / 100, item })}
+        tabIndex={1}
       />
     </div>
+  }
+  return <div className={`flex items-center ${className}`}>
+    {renderButton()}
+    {renderProgress()}
   </div>;
 };
 
