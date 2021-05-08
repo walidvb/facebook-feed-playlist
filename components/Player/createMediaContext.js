@@ -2,7 +2,15 @@
 import { useReducer, useEffect, useMemo } from 'react';
 import fabricateContext from '../hooks/createContext';
 
+
 const reducer = (state, { payload, type } = {}) => {
+  const updateQueue = ([item, newItem]) => state.queue.map((it) => {
+    if (it.media.url === item.media.url) {
+      return newItem
+    }
+    return it
+  })
+
   switch(type){
     case 'NEW_LIST':
       return {
@@ -13,61 +21,56 @@ const reducer = (state, { payload, type } = {}) => {
         ],
       }
     case 'PLAY':
+      const newPlay = {
+        ...payload.item,
+        isPlaying: true,
+      }
       return {
         ...state,
-        playing: {
-          ...payload.item,
-          isPlaying: true,
-        },
+        queue: updateQueue([payload.item, newPlay]),
+        playing: newPlay,
       }
     case 'PAUSE':
+      const newPause = {
+        ...state.playing,
+        isPlaying: false,
+      }
       return {
-        ...state,
-        playing: {
-          ...state.playing,
-          isPlaying: false,
-        },
+        queue: updateQueue([state.playing, newPause]),
+        playing: newPause,
       }
     case 'PROGRESSED':
+      const newProg = {
+        ...payload.item,
+        progress: payload.progress
+      }
       return {
-        queue: state.queue.map((item) => {
-          if(item === payload.item){
-            return {
-              ...item, 
-              progress: payload.progress
-            }
-          }
-          return item
-        }),
-        playing: {
-          ...state.playing,
-          progress: payload.progress,
-        },
+        queue: updateQueue([payload.item, newProg]),
+        playing: newProg,
       }
     case 'SEEKED_TO':
+      const newSeeked = {
+        ...payload.item,
+        seekedTo: payload.seekTo
+      }
       return {
-        queue: state.queue.map((item) => {
-          if(item === payload.item){
-            return {
-              ...item, 
-              seekedTo: payload.seekTo
-            }
-          }
-          return item
-        }),
-        playing: {
-          ...state.playing,
-          seekedTo: payload.seekTo,
-        },
+        queue: updateQueue([payload.item, newSeeked]),
       }
     case 'NEXT':
       const next = state.playing.position + 1
+      const nextPlaying = {
+        ...state.queue[next],
+        progress: 0,
+        seekedTo: 0,
+        isPlaying: true,
+      }
       return {
         ...state,
-        playing: {
-          ...state.queue[next],
-          isPlaying: true,
-        }
+        queue: updateQueue(
+          [state.playing, {...state.playing, isPlaying: false}], 
+          [state.queue[next], nextPlaying]
+        ),
+        playing: nextPlaying
       }
     default:
       return state
@@ -111,7 +114,7 @@ export const useItemState = (item) => {
 
   const { media: playingMedia } = playing
   const { url: playingUrl } = (playingMedia || {})
-  const isPlaying = useMemo(() => playingUrl === url, [url, playingUrl])
+  const isPlaying = useMemo(() => playingUrl === url && playing.isPlaying, [url, playingUrl, playing.isPlaying])
 
   return {
     isPlaying

@@ -11,10 +11,18 @@ const MediaControls = ({ item }) => {
   // id is needed to style the progress bar
   const id = useMemo(() => `input-${Math.floor(Math.random() * 2000)}`, []);
 
-  return <div className="flex items-center">
-    <div onClick={() => isPlaying ? pause() : play(item)} className={``} >
-      {isPlaying ? <Pause className={`h-12 w-12`} /> : <Play className={`h-12 w-12`} />}
+  const renderButton = () => {
+    if(isPlaying){
+      return <div onClick={() => pause()} className={``} >
+        <Pause className={`h-12 w-12`} />
+      </div>
+    }
+    return <div onClick={() => play(item)} className={``} >
+      <Play className={`h-12 w-12`} />
     </div>
+  }
+  return <div className="flex items-center">
+    {renderButton()}
     <div className="w-full break-all ml-4">
       <style dangerouslySetInnerHTML={{
         __html: `
