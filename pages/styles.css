@@ -23,11 +23,46 @@ hr {
   border: 1px solid #ddd;
 }
 
-iframe {
-  background: #ccc;
-  border: 1px solid #ccc;
-  height: 10rem;
+
+input[type=range] {
+  -webkit-appearance: none;
   width: 100%;
-  border-radius: .5rem;
-  filter: invert(1);
+  --height: 8px;
+  --thumb-height: 8px;
+  --thumb-width: 5px;
+  --thumb-color: 5px;
+  --progress-color: var(--brand);
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]:disabled{
+  background-color: var(--white, #FFF);
+}
+input[type=range]::-webkit-slider-runnable-track{
+  background-image: linear-gradient(var(--brand), var(--brand));
+  background-repeat: no-repeat;
+  width: 100%;
+  height: var(--height);
+  cursor: pointer;
+  border-radius: 0;
+}
+input[type=range]::-webkit-slider-thumb {
+  height: var(--thumb-height);
+  width: var(--thumb-width);
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  outline: solid 1px var(--brand);
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: var(--height);
+  cursor: pointer;
+  background: #3071a9;
+  border-radius: 0;
+  border: 0.2px solid #010101;
 }

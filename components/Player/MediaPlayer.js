@@ -29,12 +29,13 @@ const Media = ({ item }) => {
   if (!ReactPlayer.canPlay(url)) {
     return null;
   }
+
   if (!displayIframe && image_url) {
     return <LazyMedia image={image_url} onClick={() => play(item)} />
   }
+
   return <div className="">
     <ReactPlayer
-      // style={{ maxWidth: '100vw' }}
       url={url}
       onPlay={() => play(item)}
       onPause={() => { }}

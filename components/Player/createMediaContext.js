@@ -1,5 +1,5 @@
 
-import { useReducer, useState, useEffect } from 'react';
+import { useReducer, useEffect } from 'react';
 import fabricateContext from '../hooks/createContext';
 
 const reducer = (state, { payload, type } = {}) => {
@@ -24,7 +24,7 @@ const reducer = (state, { payload, type } = {}) => {
       return {
         ...state,
         playing: {
-          ...payload.item,
+          ...state.playing,
           isPlaying: false,
         },
       }

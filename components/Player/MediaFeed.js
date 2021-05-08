@@ -5,7 +5,8 @@ export function MediaFeed({
   RenderMedia,
   className,
 }) {
-  const { queue } = useMediaContext()
+  const { playing, queue } = useMediaContext()
+  
   if ('function' !== typeof RenderMedia){
     return <>
       { queue.map((item) => (item) => <Media item={item} />)}
@@ -13,10 +14,13 @@ export function MediaFeed({
   }
 
   return <div className={className}>
-    {queue.map((item) => <RenderMedia 
-      metadata={item.metadata}
-      renderPlayer={() => <Media key={item.media.url} item={item} />}
+    {queue.map((item) => {
+      const isPlaying = playing.media?.url === item.media.url
+      return <RenderMedia 
+        item={item}
+        isPlaying={isPlaying}
+        renderPlayer={() => <Media key={item.media.url} item={item} />}
       />
-    )}
+    })}
   </div>
 }
