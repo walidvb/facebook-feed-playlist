@@ -5,10 +5,18 @@ import { useSession } from 'next-auth/client';
 import { MediaProvider } from '../components/Player/createMediaContext';
 import Media from '../components/Player/MediaPlayer';
 import { MediaFeed } from '../components/Player/MediaFeed';
+import { useWindowScroll } from 'react-use';
+import ReactPlayer from 'react-player';
 
 const useFeed = () => {
   const [posts, setPosts] = useState([])
-  const session = useSession()
+  const [fbLoaded, setfbLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  
+  const [nextPage, setNextPage] = useState()
+
+  const { y } = useWindowScroll()
+
   useEffect(() => {
     (async () => {
       await Facebook.load()
@@ -17,14 +25,33 @@ const useFeed = () => {
       });
       await Facebook.getLoginStatus()
       Facebook.login({
-        scope: 'public_profile,email',
+        scope: 'public_profile,email, user_posts',
         return_scopes: true
       })
-
-      const { data } = await Facebook.api('/me/posts?fields=attachments{description,title,unshimmed_url,media,subattachments},created_time,message')
-      setPosts(data)
+      setfbLoaded(true)
+      getPosts('/me/posts?fields=attachments{description,title,unshimmed_url,media,subattachments},created_time,message')
     })()
   }, [])
+  
+  const getPosts = async (url) => {
+    setIsLoading(true)
+    const { data, paging } = await Facebook.api(url)
+    setNextPage(paging.next)
+    setPosts(filterPosts(data))
+    setIsLoading(false)
+  }
+  useEffect(() => {
+    if ((y + 200 < document.body.clientHeight - window.innerHeight 
+      || !fbLoaded)
+    ) {
+        return
+      }
+      if(isLoading || !nextPage){
+        return
+      }
+      getPosts(nextPage)
+  }, [y, fbLoaded])
+
   return {
     posts,
   }
@@ -32,10 +59,13 @@ const useFeed = () => {
 }
 
 const filterPosts = (posts) => posts.map((post) => {
-  const { attachments: { data } } = post
+  if(!post.attachments){
+    return
+  }
+  const { attachments: { data }, created_time, message } = post
   const firstAttachment = data[0]
   const { unshimmed_url, media }  = firstAttachment
-  if(!media){
+  if (!ReactPlayer.canPlay(unshimmed_url)){
     console.log('skipping', post)
     return null
   }
@@ -43,7 +73,8 @@ const filterPosts = (posts) => posts.map((post) => {
   return {
     metadata: {
       ...firstAttachment,
-      createdAt: post.created_time,
+      createdAt: created_time, 
+      message
     },
     media: {
       url: unshimmed_url,
@@ -69,13 +100,12 @@ const Post = ({ renderPlayer, metadata }) => {
 
 export default function Page () {
   const { posts } = useFeed()
-  const list = filterPosts(posts)
   return (
     <Layout>
       <h1>FeedIt</h1>
-      <MediaProvider list={list}>
-        <MediaFeed 
-          renderMedia={({ renderPlayer, metadata }) => <Post renderPlayer={renderPlayer} metadata={metadata}/>}
+      <MediaProvider list={posts}>
+        <MediaFeed
+          RenderMedia={Post}
           className="ts"
         />
       </MediaProvider>

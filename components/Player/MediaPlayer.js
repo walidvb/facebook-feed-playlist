@@ -5,10 +5,10 @@ import { useMediaContext } from './createMediaContext';
 
 const LazyMedia = ({ image, onClick }) => (
   <div>
-    <div style={{ width: "640px", maxWidth: '100vw' }} onClick={onClick}
-      className="relative cursor-pointer"
+    <div onClick={onClick}
+      className="relative cursor-pointer aspect-w-16 aspect-h-9"
     >
-      {/* <YoutubePlayIcon /> */}
+      <YoutubePlayIcon />
       <img className="w-full" src={image} />
     </div>
   </div>
@@ -32,9 +32,9 @@ const Media = ({ item }) => {
   if (!displayIframe && image_url) {
     return <LazyMedia image={image_url} onClick={() => play(item)} />
   }
-  return <div>
+  return <div className="">
     <ReactPlayer
-      style={{ maxWidth: '100vw' }}
+      // style={{ maxWidth: '100vw' }}
       url={url}
       onPlay={() => play(item)}
       onPause={() => { }}

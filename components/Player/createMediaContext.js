@@ -7,7 +7,10 @@ const reducer = (state, { payload, type } = {}) => {
     case 'NEW_LIST':
       return {
         ...state,
-        queue: payload.map((m, i) => ({ ...m, position: i }))
+        queue: [
+          ...state.queue,
+          ...payload.map((m, i) => ({ ...m, position: i }))
+        ],
       }
     case 'PLAY':
       return {
