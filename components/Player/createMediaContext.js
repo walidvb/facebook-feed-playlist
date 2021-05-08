@@ -28,6 +28,22 @@ const reducer = (state, { payload, type } = {}) => {
           isPlaying: false,
         },
       }
+    case 'PROGRESSED':
+      return {
+        queue: state.queue.map((item) => {
+          if(item === payload.item){
+            return {
+              ...item, 
+              progress: payload.progress
+            }
+          }
+          return item
+        }),
+        playing: {
+          ...state.playing,
+          progress: payload.progress,
+        },
+      }
     case 'NEXT':
       const next = state.playing.position + 1
       return {
@@ -63,6 +79,7 @@ export const {
     play: (item) => dispatch({ type: 'PLAY', payload: { item } }),
     pause: () => dispatch({ type: 'PAUSE' }),
     next: () => dispatch({ type: 'NEXT' }),
+    progressed: ({ progress, item }) => dispatch({ type: 'PROGRESSED', payload: { progress, item } }),
   }
 
   return {

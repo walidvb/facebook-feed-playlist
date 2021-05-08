@@ -3,10 +3,10 @@ import { useMemo } from 'react';
 import { useMediaContext } from "./createMediaContext";
 
 const VALUE_FACTOR = 100
-const MediaControls = ({ progress, item }) => {
-  const { playing, play, pause } = useMediaContext()
+const MediaControls = ({ item }) => {
+  const { playing, play, pause, seekTo } = useMediaContext()
+  const { progress } = item
   const isPlaying = useMemo(() => playing.isPlaying && playing.media?.url === item.media.url, [item, playing])
-  console.log(isPlaying)
   const id = useMemo(() => `input-${Math.floor(Math.random() * 2000)}`, []);
   return <div className="flex items-center">
     <div
@@ -26,13 +26,13 @@ const MediaControls = ({ progress, item }) => {
       ` }}>
       </style>
       <input
-        id={`id`}
-        // value={progress}
+        id={id}
+        value={progress}
         type="range"
         min={0}
         className="w-full"
-        max={VALUE_FACTOR}
-        // onChange={({ target: { value } }) => setSeekTo(parseInt(value))}
+        max={100}
+        onChange={({ target: { value } }) => seekTo({ progress: parseInt(value), item })}
         tabIndex={1} />
     </div>
   </div>;

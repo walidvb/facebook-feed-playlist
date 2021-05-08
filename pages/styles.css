@@ -8,6 +8,7 @@ body {
   min-width: 100vh;
   background: #fff;
   color: #333;
+  --brand: #333;
 }
 
 li,
