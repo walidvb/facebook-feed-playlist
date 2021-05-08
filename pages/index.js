@@ -3,7 +3,7 @@ import Layout from '../components/layout'
 import { useSession } from 'next-auth/client';
 import { MediaProvider } from '../components/Player/createMediaContext';
 import Media from '../components/Player/MediaPlayer';
-import { MediaFeed } from '../components/Player/MediaFeed';
+import { MediaFeed, MediaFloatingPlayer } from '../components/Player/MediaFeed';
 import ReactPlayer from 'react-player';
 import { useFeed } from '../components/hooks/useFeed';
 import { Post } from '../components/Post';
@@ -14,6 +14,7 @@ export default function Page () {
     <Layout>
       <h1>FeedIt</h1>
       <MediaProvider list={posts}>
+        <MediaFloatingPlayer />
         <MediaFeed
           RenderMedia={Post}
           className="divide-gray-400 divide-y"

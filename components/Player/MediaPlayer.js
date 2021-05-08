@@ -14,18 +14,19 @@ const LazyMedia = ({ image, onClick }) => (
   </div>
 )
 
-
-
-const Media = ({ item }) => {
+const Media = ({ 
+  item, 
+  lazy = true 
+}) => {
   const { play, next, pause, playing, progressed } = useMediaContext()
   const player = useRef()
-  const [displayIframe, setDisplayIframe] = useState(false)
+  const [displayThumb, setDisplayThumb] = useState(lazy)
   const { isPlaying } = useItemState(item)
 
   const { media, seekedTo } = item
   const { url, image_url } = media
   
-  useEffect(() => { if(isPlaying){ setDisplayIframe(true) } }, [isPlaying])
+  useEffect(() => { if(isPlaying){ setDisplayThumb(false) } }, [isPlaying])
   useEffect(() => {
     if (!player.current || !seekedTo){
       return
@@ -37,7 +38,7 @@ const Media = ({ item }) => {
     return null;
   }
 
-  if (!displayIframe && image_url) {
+  if (displayThumb && image_url) {
     return <LazyMedia image={image_url} onClick={() => play(item)} />
   }
 

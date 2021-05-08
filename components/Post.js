@@ -13,7 +13,6 @@ export const Post = ({ renderPlayer, item }) => {
       {message}
     </div>
     <MediaControls item={item} />
-    {renderPlayer()}
     <details>
       <summary>
         item
