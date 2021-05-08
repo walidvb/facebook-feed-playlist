@@ -7,6 +7,7 @@ const MediaControls = ({
   item,
   className,
   noProgress,
+  noControl,
 }) => {
   const { play, pause, seekTo } = useMediaContext()
   const { 
@@ -18,6 +19,9 @@ const MediaControls = ({
   const id = useMemo(() => `input-${Math.floor(Math.random() * 2000)}`, []);
 
   const renderButton = () => {
+    if(noControl){
+      return
+    }
     if(isPlaying){
       return <div onClick={() => pause()} className={``} >
         <Pause className={`h-12 w-12`} />

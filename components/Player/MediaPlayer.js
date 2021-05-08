@@ -16,7 +16,8 @@ const LazyMedia = ({ image, onClick }) => (
 
 const Media = ({ 
   item, 
-  lazy = true 
+  lazy = true,
+  className,
 }) => {
   const { play, next, pause, playing, progressed } = useMediaContext()
   const player = useRef()
@@ -39,10 +40,11 @@ const Media = ({
   }
 
   if (displayThumb && image_url) {
-    return <LazyMedia image={image_url} onClick={() => play(item)} />
+    return <LazyMedia className={className} image={image_url} onClick={() => play(item)} />
   }
 
   return <ReactPlayer
+      className={className}
       url={url}
       ref={player}
       onPlay={() => play(item)}

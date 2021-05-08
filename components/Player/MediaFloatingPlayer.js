@@ -2,18 +2,18 @@ import { useMediaContext } from "./createMediaContext";
 import Media from './MediaPlayer';
 
 
-export const MediaFloatingPlayer = () => {
+export const MediaFloatingPlayer = ({
+  hidden
+}) => {
   const { playing } = useMediaContext();
   if (!playing.media) {
     return null;
   }
   return <>
-    <Media item={playing} lazy={false} />
-    <details>
-      <summary>
-        playing
-      </summary>
-      {JSON.stringify(playing)}
-    </details>
+    <Media
+      // className={hidden && "absolute top-0 pointer-events-none opacity-0"}
+      item={playing}
+      lazy={false} 
+    />
   </>;
 };

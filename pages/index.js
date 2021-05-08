@@ -14,7 +14,7 @@ export default function Page () {
       <h1>FeedIt</h1>
       <MediaProvider list={posts}>
         <MediaFloatingPlayer />
-        <MediaQueue className="divide-gray-400 divide-y" />
+        <MediaQueue className="divide-gray-400 divide-y fixed bottom-0 max-h-72 z-10 bg-white overflow-y-auto" />
       </MediaProvider>
     </Layout>
   )
