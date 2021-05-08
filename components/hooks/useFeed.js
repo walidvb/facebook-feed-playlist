@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import * as Facebook from 'fb-sdk-wrapper';
 import { useWindowScroll } from 'react-use';
 import ReactPlayer from 'react-player';
+import { useSession } from 'next-auth/client';
 
 const filterPosts = (posts) => posts.map((post) => {
   if (!post.attachments) {
@@ -34,12 +35,15 @@ export const useFeed = () => {
   const [posts, setPosts] = useState([]);
   const [fbLoaded, setfbLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [session] = useSession()
   const [nextPage, setNextPage] = useState();
 
   const { y } = useWindowScroll();
 
   useEffect(() => {
+    if(!session){
+      return
+    }
     (async () => {
       await Facebook.load();
       await Facebook.init({
@@ -53,7 +57,7 @@ export const useFeed = () => {
       setfbLoaded(true);
       getPosts('/me/posts?fields=attachments{description,title,unshimmed_url,media,subattachments},created_time,message');
     })();
-  }, []);
+  }, [session]);
 
   const getPosts = async (url) => {
     setIsLoading(true);
