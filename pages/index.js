@@ -1,9 +1,7 @@
 import React from 'react'
 import Layout from '../components/layout'
 import { MediaProvider, useMediaContext } from '../components/Player/createMediaContext';
-import { MediaFeed } from '../components/Player/MediaFeed';
 import { useFeed } from '../components/hooks/useFeed';
-import { Post } from '../components/Post';
 import { MediaFloatingPlayer } from '../components/Player/MediaFloatingPlayer';
 import { MediaQueue } from '../components/Player/MediaQueue';
 import { useSession, signIn } from 'next-auth/client';
@@ -26,23 +24,26 @@ const Details = () =>{
 }
 
 export default function Page () {
-  const { posts } = useFeed()
-  const [session, ] = useSession()
+  const { posts, isLoading, isLoggedIn } = useFeed()
 
-  if(!session){
+  if(!isLoggedIn){
     return <Layout>
-      <button onClick={() => signIn()}>Sign in</button>
+      <div className="grid flex-grow place-content-around">
+        <div>
+          <button className="underline" onClick={() => signIn()}>Sign in</button>
+          &nbsp;to your latest posts as a media playlist!
+        </div>
+      </div>
     </Layout>
   }
   return (
     <Layout>
-      <h1>FeedIt</h1>
+      <h1>Your feed</h1>
       <MediaProvider list={posts}>
         <div className="flex gap-2 grid-cols-[auto,1fr] container mx-auto">
           <MediaQueue className="divide-gray-400 mr-4 divide-y flex-shrink" />
           <div>
             <div className="sticky top-0">
-
               <MediaFloatingPlayer />
               <Details />
             </div>

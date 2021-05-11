@@ -35,36 +35,49 @@ export const useFeed = () => {
   const [posts, setPosts] = useState([]);
   const [fbLoaded, setfbLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [session] = useSession()
+  const [fbSession, setFbSession] = useState()
+  
   const [nextPage, setNextPage] = useState();
 
   const { y } = useWindowScroll();
 
   useEffect(() => {
-    if(!session){
-      return
-    }
     (async () => {
       await Facebook.load();
-      await Facebook.init({
-        appId: '926693044836109',
-      });
-      await Facebook.getLoginStatus();
-      Facebook.login({
-        scope: 'public_profile,email, user_posts',
-        return_scopes: true
-      });
-      setfbLoaded(true);
-      getPosts('/me/posts?fields=attachments{description,title,unshimmed_url,media,subattachments},created_time,message');
-    })();
-  }, [session]);
+      await Facebook.init({ appId: 926693044836109 });
+      console.log('app initid')
+      const s = await Facebook.getLoginStatus();
+      console.log('current status: ', s)
+      setFbSession(s.authResponse)
+      if(!s.status !== 'connected'){
+        Facebook.login({
+          scope: 'public_profile,email,user_posts',
+          return_scopes: true
+        }).then((res) => {
+          console.log('logged in status: ')
+          setfbLoaded(true);
+          getPosts('/me/posts?fields=attachments{description,title,unshimmed_url,media,subattachments},created_time,message', {
+            accessToken: s.authResponse.accessToken
+          });
+        })
+      }else{
+        getPosts('/me/posts?fields=attachments{description,title,unshimmed_url,media,subattachments},created_time,message', {
+          accessToken: s.authResponse.accessToken
+        });
+      }
+      })();
+  }, []);
 
-  const getPosts = async (url) => {
+  const getPosts = async (url, params = fbSession) => {
     setIsLoading(true);
-    const { data, paging } = await Facebook.api(url);
+    const { data, paging, ...ap } = await Facebook.api(url, params);
+    setIsLoading(false);
+    if(!paging){
+      console.error("Couldn't fetch", { data, paging, ...ap})
+      return
+    }
     setNextPage(paging.next);
     setPosts(filterPosts(data));
-    setIsLoading(false);
   };
   useEffect(() => {
     if ((y + 200 < document.body.clientHeight - window.innerHeight
@@ -78,6 +91,8 @@ export const useFeed = () => {
   }, [y, fbLoaded]);
 
   return {
+    isLoading: !fbLoaded,
+    isLoggedIn: Boolean(fbSession),
     posts,
   };
 };
